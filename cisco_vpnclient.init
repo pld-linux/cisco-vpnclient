@@ -16,15 +16,6 @@
 VPNCLIENT="/opt/cisco-vpnclient/bin/vpnclient"
 VPNDEV="cipsec0"
 VPNMOD=cisco_ipsec
-case `uname -r` in
-2.[56].*)
-    VPNMOD_FILE="${VPNMOD}.ko"
-    ;;
-*)
-    VPNMOD_FILE="$VPNMOD"
-    ;;
-esac    
-
 WHOAMI=`id | sed -e 's/(.*//'`
 
 # See how we were called.
@@ -45,21 +36,11 @@ case "$1" in
 		echo "restoring /etc/resolv.conf"
 		mv /etc/resolv.conf.vpnbackup /etc/resolv.conf
 	fi
-	if [ -d /lib/modules/preferred ]; then
-		PC=/lib/modules/preferred/CiscoVPN
-	else
-		PC=/lib/modules/`uname -r`/misc
-	fi
-	if [ -d $PC ] ; then
-		/sbin/insmod ${PC}/${VPNMOD_FILE}
-		if [ "$?" != "0" ] ; then
-			echo "Failed (insmod)"
-		exit 1
+	/sbin/modprobe ${VPNMOD}
+	if [ "$?" != "0" ] ; then
+		echo "Failed (insmod)"
+	exit 1
         fi
-	else
-		echo "module directory $PC not found."
-		exit 1
-	fi
 	case "`uname -r`" in
 	2.6.*)
 		;;
