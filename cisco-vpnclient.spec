@@ -11,6 +11,7 @@
 %endif
 
 Summary:	Cisco Systems VPN Client
+Summary(pl):	Klient VPN dla systemów Cisco
 Name:		cisco_vpnclient
 Version:	4.6.00.0045_k9
 Release:	0.1
@@ -29,10 +30,14 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_mandir		%{_prefix}/man
 
 %description
-Cisco Systems VPN Client
+Cisco Systems VPN Client.
+
+%description -l pl
+Klient VPN dla systemów Cisco.
 
 %package -n kernel-net-cisco_ipsec
 Summary:	Cisco Systems VPN Client - kernel module
+Summary(pl):	Klient VPN dla systemów Cisco - modu³y kernela
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	Commercial
 Vendor:		Cisco Systems
@@ -42,7 +47,10 @@ Requires(post,postun):	/sbin/depmod
 Provides:	cisco_vpnclient(kernel)
 
 %description -n kernel-net-cisco_ipsec
-Cisco Systems VPN Client
+Cisco Systems VPN Client.
+
+%description -n kernel-net-cisco_ipsec -l pl
+Klient VPN dla systemów Cisco.
 
 %package -n kernel-smp-net-cisco_ipsec
 Summary:	Cisco Systems VPN Client - kernel module (smp)
@@ -55,7 +63,10 @@ Requires(post,postun):	/sbin/depmod
 Provides:	cisco_vpnclient(kernel)
 
 %description -n kernel-smp-net-cisco_ipsec
-Cisco Systems VPN Client (smp)
+Cisco Systems VPN Client (smp).
+
+%description -n kernel-net-cisco_ipsec -l pl
+Klient VPN dla systemów Cisco (smp).
 
 %prep
 %setup -q -n vpnclient
