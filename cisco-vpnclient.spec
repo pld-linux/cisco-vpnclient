@@ -5,13 +5,12 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
-
+#
 %if %{without kernel}
 %undefine with_dist_kernel
 %endif
-
 Summary:	Cisco Systems VPN Client
-Summary(pl):	Klient VPN dla systemów Cisco
+Summary(pl):	Klient VPN produkcji Cisco Systems
 Name:		cisco_vpnclient
 Version:	4.6.00.0045_k9
 Release:	0.1
@@ -20,40 +19,36 @@ Vendor:		Cisco Systems
 Group:		Networking
 Source0:	vpnclient-linux-4.6.00.0045-k9.tar.gz
 Source1:	%{name}.init
-URL:		http://www.cisco.com
+URL:		http://www.cisco.com/
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.0}
 BuildRequires:	rpmbuild(macros) >= 1.153
-Requires:	cisco_vpnclient(kernel)
 ExclusiveArch:	%{ix86}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-%define		_mandir		%{_prefix}/man
 
 %description
 Cisco Systems VPN Client.
 
 %description -l pl
-Klient VPN dla systemów Cisco.
+Klient VPN produkcji Cisco Systems.
 
 %package -n kernel-net-cisco_ipsec
 Summary:	Cisco Systems VPN Client - kernel module
-Summary(pl):	Klient VPN dla systemów Cisco - modu³y kernela
+Summary(pl):	Klient VPN produkcji Cisco Systems - modu³ j±dra
 Release:	%{_rel}@%{_kernel_ver_str}
-License:	Commercial
-Vendor:		Cisco Systems
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
 Provides:	cisco_vpnclient(kernel)
 
 %description -n kernel-net-cisco_ipsec
-Cisco Systems VPN Client.
+Cisco Systems VPN Client - Linux kernel module.
 
 %description -n kernel-net-cisco_ipsec -l pl
-Klient VPN dla systemów Cisco.
+Klient VPN produkcji Cisco Systems - modu³ j±dra Linuksa.
 
 %package -n kernel-smp-net-cisco_ipsec
-Summary:	Cisco Systems VPN Client - kernel module (smp)
+Summary:	Cisco Systems VPN Client - SMP kernel module
+Summary(pl):	Klient VPN produkcji Cisco Systems - modu³ j±dra SMP
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	Commercial
 Vendor:		Cisco Systems
@@ -63,10 +58,10 @@ Requires(post,postun):	/sbin/depmod
 Provides:	cisco_vpnclient(kernel)
 
 %description -n kernel-smp-net-cisco_ipsec
-Cisco Systems VPN Client (smp).
+Cisco Systems VPN Client - Linux SMP kernel module.
 
 %description -n kernel-net-cisco_ipsec -l pl
-Klient VPN dla systemów Cisco (smp).
+Klient VPN produkcji Cisco Systems - modu³ j±dra Linuksa SMP.
 
 %prep
 %setup -q -n vpnclient
@@ -116,7 +111,6 @@ install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 
 install -d $RPM_BUILD_ROOT%{_sbindir}
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/opt/cisco-vpnclient
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/opt/cisco-vpnclient/Certificates
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/opt/cisco-vpnclient/Profiles
 
@@ -179,8 +173,8 @@ fi
 %dir %{_sysconfdir}/opt/cisco-vpnclient/Profiles
 %attr(755,root,root) /opt/cisco-vpnclient/bin/*
 %attr(755,root,root) %{_sbindir}/*
-%attr(644,root,root) /opt/cisco-vpnclient/lib/*
-%attr(644,root,root) /opt/cisco-vpnclient/include/*
+/opt/cisco-vpnclient/lib/*
+/opt/cisco-vpnclient/include/*
 %attr(755,root,root) %{_sysconfdir}/CiscoSystemsVPNClient
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/opt/cisco-vpnclient/vpnclient.ini
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
