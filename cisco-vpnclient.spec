@@ -9,16 +9,19 @@
 %if %{without kernel}
 %undefine with_dist_kernel
 %endif
+%define		_rel	0.1
 Summary:	Cisco Systems VPN Client
 Summary(pl):	Klient VPN produkcji Cisco Systems
 Name:		cisco_vpnclient
 Version:	4.6.00.0045_k9
-Release:	0.1
+Release:	%{_rel}
 License:	Commercial
 Vendor:		Cisco Systems
 Group:		Networking
 Source0:	vpnclient-linux-4.6.00.0045-k9.tar.gz
+# NoSource0-md5:	4204c9cc10d57d3e0d8de0fc7548bbf5
 Source1:	%{name}.init
+NoSource:	0
 URL:		http://www.cisco.com/
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.0}
 BuildRequires:	rpmbuild(macros) >= 1.153
