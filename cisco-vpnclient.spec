@@ -20,7 +20,7 @@ Vendor:		Cisco Systems
 Group:		Networking
 Source0:	vpnclient-linux-4.6.00.0045-k9.tar.gz
 # NoSource0-md5:	4204c9cc10d57d3e0d8de0fc7548bbf5
-Source1:	%{name}.init
+Source1:	cisco_vpnclient.init
 NoSource:	0
 URL:		http://www.cisco.com/
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.0}
