@@ -48,7 +48,7 @@ case "$1" in
 	if [ -d /lib/modules/preferred ]; then
 		PC=/lib/modules/preferred/CiscoVPN
 	else
-		PC=/lib/modules/`uname -r`/CiscoVPN
+		PC=/lib/modules/`uname -r`/misc
 	fi
 	if [ -d $PC ] ; then
 		/sbin/insmod ${PC}/${VPNMOD_FILE}
