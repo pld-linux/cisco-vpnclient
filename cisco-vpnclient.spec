@@ -12,7 +12,7 @@
 %define		_rel	0.1
 Summary:	Cisco Systems VPN Client
 Summary(pl):	Klient VPN produkcji Cisco Systems
-Name:		cisco_vpnclient
+Name:		cisco-vpnclient
 Version:	4.6.00.0045_k9
 Release:	%{_rel}
 License:	Commercial
@@ -41,7 +41,7 @@ Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
-Provides:	cisco_vpnclient(kernel)
+Provides:	cisco-vpnclient(kernel)
 
 %description -n kernel-net-cisco_ipsec
 Cisco Systems VPN Client - Linux kernel module.
@@ -58,7 +58,7 @@ Vendor:		Cisco Systems
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
-Provides:	cisco_vpnclient(kernel)
+Provides:	cisco-vpnclient(kernel)
 
 %description -n kernel-smp-net-cisco_ipsec
 Cisco Systems VPN Client - Linux SMP kernel module.
@@ -136,19 +136,19 @@ ln -sf %{_sysconfdir}/opt/cisco-vpnclient $RPM_BUILD_ROOT%{_sysconfdir}/CiscoSys
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/chkconfig --add cisco_vpnclient
-if [ -f /var/lock/subsys/cisco_vpnclient ]; then
-        /etc/rc.d/init.d/cisco_vpnclient restart >&2
+/sbin/chkconfig --add cisco-vpnclient
+if [ -f /var/lock/subsys/cisco-vpnclient ]; then
+        /etc/rc.d/init.d/cisco-vpnclient restart >&2
 else
-        echo "Run '/etc/rc.d/init.d/cisco_vpnclient start' to start vpnclient support." >&2
+        echo "Run '/etc/rc.d/init.d/cisco-vpnclient start' to start vpnclient support." >&2
 fi
 
 %preun
 if [ "$1" = "0" ]; then
-        if [ -f /var/lock/subsys/cisco_vpnclient ]; then
-                /etc/rc.d/init.d/cisco_vpnclient stop >&2
+        if [ -f /var/lock/subsys/cisco-vpnclient ]; then
+                /etc/rc.d/init.d/cisco-vpnclient stop >&2
         fi
-        /sbin/chkconfig --del cisco_vpnclient >&2
+        /sbin/chkconfig --del cisco-vpnclient >&2
 fi
 
 %post	-n kernel-net-cisco_ipsec
