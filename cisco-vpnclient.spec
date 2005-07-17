@@ -13,13 +13,13 @@
 Summary:	Cisco Systems VPN Client
 Summary(pl):	Klient VPN produkcji Cisco Systems
 Name:		cisco-vpnclient
-Version:	4.6.00.0045_k9
+Version:	4.6.02.0030_k9
 Release:	%{_rel}
 License:	Commercial
 Vendor:		Cisco Systems
 Group:		Networking
-Source0:	vpnclient-linux-4.6.00.0045-k9.tar.gz
-# NoSource0-md5:	4204c9cc10d57d3e0d8de0fc7548bbf5
+Source0:	vpnclient-linux-4.6.02.0030-k9.tar.gz
+# NoSource0-md5:	435dd370208643e526623ddfca6e938a
 Source1:	cisco_vpnclient.init
 NoSource:	0
 URL:		http://www.cisco.com/
