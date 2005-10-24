@@ -24,6 +24,7 @@ Source0:	vpnclient-linux-4.7.00.0640-k9.tar.gz
 Source1:	vpnclient-linux-x86_64-4.7.00.0640-k9.tar.gz
 Source2:	cisco_vpnclient.init
 NoSource:	0
+NoSource:	1
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.0}
 BuildRequires:	rpmbuild(macros) >= 1.153
