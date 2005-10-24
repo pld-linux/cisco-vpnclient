@@ -1,4 +1,5 @@
-#
+# TODO:
+# - /opt ??????
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
@@ -13,19 +14,20 @@
 Summary:	Cisco Systems VPN Client
 Summary(pl):	Klient VPN produkcji Cisco Systems
 Name:		cisco-vpnclient
-Version:	4.6.02.0030_k9
+Version:	4.7.00.0640_k9
 Release:	%{_rel}
 License:	Commercial
 Vendor:		Cisco Systems
 Group:		Networking
-Source0:	vpnclient-linux-4.6.02.0030-k9.tar.gz
+Source0:	vpnclient-linux-4.7.00.0640-k9.tar.gz
 # NoSource0-md5:	435dd370208643e526623ddfca6e938a
-Source1:	cisco_vpnclient.init
+Source1:	vpnclient-linux-x86_64-4.7.00.0640-k9.tar.gz
+Source2:	cisco_vpnclient.init
 NoSource:	0
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.0}
 BuildRequires:	rpmbuild(macros) >= 1.153
-ExclusiveArch:	%{ix86}
+ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -67,9 +69,16 @@ Cisco Systems VPN Client - Linux SMP kernel module.
 Klient VPN produkcji Cisco Systems - modu³ j±dra Linuksa SMP.
 
 %prep
-%setup -q -n vpnclient
+%setup -q -T -c -n %{name}-%{version}
+%ifarch %{ix86}
+tar -zxvf %{SOURCE0}
+%endif
+%ifarch %{x8664}
+tar -zxvf %{SOURCE1}
+%endif
 
 %build
+cd vpnclient
 %if %{with kernel}
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
 	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
@@ -98,6 +107,7 @@ done
 
 %install
 rm -rf $RPM_BUILD_ROOT
+cd vpnclient
 
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
@@ -111,16 +121,11 @@ install cisco_ipsec-smp.ko \
 %endif
 
 %if %{with userspace}
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
+install -d $RPM_BUILD_ROOT{/etc/rc.d/init.d,%{_sbindir}} \
+	$RPM_BUILD_ROOT%{_sysconfdir}/opt/cisco-vpnclient/{Certificates,Profiles} \
+	$RPM_BUILD_ROOT/opt/cisco-vpnclient/{bin,lib,include}
+
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
-
-install -d $RPM_BUILD_ROOT%{_sbindir}
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/opt/cisco-vpnclient/Certificates
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/opt/cisco-vpnclient/Profiles
-
-install -d $RPM_BUILD_ROOT/opt/cisco-vpnclient/bin
-install -d $RPM_BUILD_ROOT/opt/cisco-vpnclient/lib
-install -d $RPM_BUILD_ROOT/opt/cisco-vpnclient/include
 
 install {cisco_cert_mgr,vpnclient,cvpnd,ipseclog} $RPM_BUILD_ROOT/opt/cisco-vpnclient/bin
 install libvpnapi.so $RPM_BUILD_ROOT/opt/cisco-vpnclient/lib
@@ -167,7 +172,7 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%doc license.txt sample.pcf
+%doc vpnclient/license.txt vpnclient/sample.pcf
 %dir /opt/cisco-vpnclient
 %dir /opt/cisco-vpnclient/bin
 %dir /opt/cisco-vpnclient/lib
