@@ -22,7 +22,7 @@ Source0:	vpnclient-linux-4.6.02.0030-k9.tar.gz
 # NoSource0-md5:	435dd370208643e526623ddfca6e938a
 Source1:	cisco_vpnclient.init
 NoSource:	0
-URL:		http://www.cisco.com/
+URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.0}
 BuildRequires:	rpmbuild(macros) >= 1.153
 ExclusiveArch:	%{ix86}
