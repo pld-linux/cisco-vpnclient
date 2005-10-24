@@ -125,7 +125,7 @@ install -d $RPM_BUILD_ROOT{/etc/rc.d/init.d,%{_sbindir}} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/opt/cisco-vpnclient/{Certificates,Profiles} \
 	$RPM_BUILD_ROOT/opt/cisco-vpnclient/{bin,lib,include}
 
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 
 install {cisco_cert_mgr,vpnclient,cvpnd,ipseclog} $RPM_BUILD_ROOT/opt/cisco-vpnclient/bin
 install libvpnapi.so $RPM_BUILD_ROOT/opt/cisco-vpnclient/lib
