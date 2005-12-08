@@ -27,7 +27,7 @@ case "$1" in
 		exit 1
 	fi
 	/sbin/lsmod | grep -q "${VPNMOD}"
-        if [ "$?" = "0" ] ; then 
+        if [ "$?" = "0" ] ; then
 		echo "module ${VPNMOD} is already running. Use restart instead."
 		exit 1
 	fi
@@ -68,7 +68,6 @@ case "$1" in
 		exit 1
 		;;
 	esac
-	
 	echo "Done"
 	;;
   stop)
@@ -80,7 +79,7 @@ case "$1" in
     killall cvpnd > /dev/null 2>&1
 
 	/sbin/lsmod | grep -q "${VPNMOD}"
-    if [ "$?" != "0" ] ; then 
+    if [ "$?" != "0" ] ; then
 		echo "module ${VPNMOD} is not running."
 		exit 1
 	fi
