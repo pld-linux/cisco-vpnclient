@@ -17,7 +17,6 @@ Name:		cisco-vpnclient
 Version:	4.7.00.0640_k9
 Release:	%{_rel}
 License:	Commercial
-Vendor:		Cisco Systems
 Group:		Networking
 Source0:	vpnclient-linux-4.7.00.0640-k9.tar.gz
 # NoSource0-md5:	435dd370208643e526623ddfca6e938a
@@ -26,7 +25,7 @@ Source2:	cisco_vpnclient.init
 NoSource:	0
 NoSource:	1
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.0}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.0}
 BuildRequires:	rpmbuild(macros) >= 1.153
 ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -57,7 +56,6 @@ Summary:	Cisco Systems VPN Client - SMP kernel module
 Summary(pl):	Klient VPN produkcji Cisco Systems - modu³ j±dra SMP
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	Commercial
-Vendor:		Cisco Systems
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
@@ -70,7 +68,7 @@ Cisco Systems VPN Client - Linux SMP kernel module.
 Klient VPN produkcji Cisco Systems - modu³ j±dra Linuksa SMP.
 
 %prep
-%setup -q -T -c -n %{name}-%{version}
+%setup -q -T -c
 %ifarch %{ix86}
 tar -zxvf %{SOURCE0}
 %endif
