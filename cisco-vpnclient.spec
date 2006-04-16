@@ -27,6 +27,8 @@ NoSource:	1
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.0}
 BuildRequires:	rpmbuild(macros) >= 1.268
+Requires(post,preun):	/sbin/chkconfig
+Requires:	rc-scripts
 ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -147,7 +149,7 @@ rm -rf $RPM_BUILD_ROOT
 %preun
 if [ "$1" = "0" ]; then
 	%service cisco-vpnclient stop
-	/sbin/chkconfig --del cisco-vpnclient >&2
+	/sbin/chkconfig --del cisco-vpnclient
 fi
 
 %post	-n kernel-net-cisco_ipsec
