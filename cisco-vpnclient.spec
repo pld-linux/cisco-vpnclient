@@ -7,7 +7,7 @@
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
 #
-%if %{without kernel}
+%if !%{with kernel}
 %undefine with_dist_kernel
 %endif
 %define		_rel	0.1
@@ -91,7 +91,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
 	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
 	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
-%if %{without dist_kernel}
+%if !%{with dist_kernel}
 	ln -sf %{_kernelsrcdir}/scripts
 %endif
 	touch include/config/MARKER
