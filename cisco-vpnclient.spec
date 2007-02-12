@@ -12,7 +12,7 @@
 %endif
 %define		_rel	0.1
 Summary:	Cisco Systems VPN Client
-Summary(pl):	Klient VPN produkcji Cisco Systems
+Summary(pl.UTF-8):   Klient VPN produkcji Cisco Systems
 Name:		cisco-vpnclient
 Version:	4.7.00.0640_k9
 Release:	%{_rel}
@@ -35,12 +35,12 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 Cisco Systems VPN Client.
 
-%description -l pl
+%description -l pl.UTF-8
 Klient VPN produkcji Cisco Systems.
 
 %package -n kernel-net-cisco_ipsec
 Summary:	Cisco Systems VPN Client - kernel module
-Summary(pl):	Klient VPN produkcji Cisco Systems - modu³ j±dra
+Summary(pl.UTF-8):   Klient VPN produkcji Cisco Systems - moduÅ‚ jÄ…dra
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -50,12 +50,12 @@ Provides:	cisco-vpnclient(kernel)
 %description -n kernel-net-cisco_ipsec
 Cisco Systems VPN Client - Linux kernel module.
 
-%description -n kernel-net-cisco_ipsec -l pl
-Klient VPN produkcji Cisco Systems - modu³ j±dra Linuksa.
+%description -n kernel-net-cisco_ipsec -l pl.UTF-8
+Klient VPN produkcji Cisco Systems - moduÅ‚ jÄ…dra Linuksa.
 
 %package -n kernel-smp-net-cisco_ipsec
 Summary:	Cisco Systems VPN Client - SMP kernel module
-Summary(pl):	Klient VPN produkcji Cisco Systems - modu³ j±dra SMP
+Summary(pl.UTF-8):   Klient VPN produkcji Cisco Systems - moduÅ‚ jÄ…dra SMP
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	Commercial
 Group:		Base/Kernel
@@ -66,8 +66,8 @@ Provides:	cisco-vpnclient(kernel)
 %description -n kernel-smp-net-cisco_ipsec
 Cisco Systems VPN Client - Linux SMP kernel module.
 
-%description -n kernel-net-cisco_ipsec -l pl
-Klient VPN produkcji Cisco Systems - modu³ j±dra Linuksa SMP.
+%description -n kernel-net-cisco_ipsec -l pl.UTF-8
+Klient VPN produkcji Cisco Systems - moduÅ‚ jÄ…dra Linuksa SMP.
 
 %prep
 %setup -q -T -c
