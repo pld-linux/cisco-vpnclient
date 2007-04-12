@@ -1,0 +1,21 @@
+diff -Nur cisco-vpnclient-4.7.00.0640_k9-old/vpnclient/linuxcniapi.c cisco-vpnclient-4.7.00.0640_k9/vpnclient/linuxcniapi.c
+--- cisco-vpnclient-4.7.00.0640_k9-old/vpnclient/linuxcniapi.c	2007-04-06 13:00:15.000000000 +0200
++++ cisco-vpnclient-4.7.00.0640_k9/vpnclient/linuxcniapi.c	2007-04-06 13:00:35.000000000 +0200
+@@ -289,7 +289,7 @@
+         goto exit_gracefully;
+     }
+     /* move the data into the packet */
+-    do_gettimeofday(&skb->stamp);
++    do_gettimeofday(&skb->tstamp);
+ 
+     pIP = skb_put(skb, lpPacketDescriptor->uiPacketSize);
+ 
+@@ -429,7 +429,7 @@
+     CniGetPacketData(Packet, 0, lpPacketDescriptor->uiPacketSize, pIP);
+ 
+     /* put the mac header on */
+-    do_gettimeofday(&skb->stamp);
++    do_gettimeofday(&skb->tstamp);
+ 
+     skb->dev = pBinding->pDevice;
+ 

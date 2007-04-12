@@ -25,6 +25,7 @@ Source1:	vpnclient-linux-x86_64-4.7.00.0640-k9.tar.gz
 Source2:	cisco_vpnclient.init
 NoSource:	0
 NoSource:	1
+Patch0:		%{name}-kernel.patch
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.0}
 BuildRequires:	rpmbuild(macros) >= 1.268
@@ -78,6 +79,7 @@ tar -zxvf %{SOURCE0}
 %ifarch %{x8664}
 tar -zxvf %{SOURCE1}
 %endif
+%patch0 -p1
 
 %build
 cd vpnclient
@@ -86,22 +88,31 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
 		exit 1
 	fi
-	rm -rf include
-	install -d include/{linux,config}
-	ln -sf %{_kernelsrcdir}/config-$cfg .config
-	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
-	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
-	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
-%if !%{with dist_kernel}
-	ln -sf %{_kernelsrcdir}/scripts
-%endif
-	touch include/config/MARKER
+	install -d o/include/linux
+	ln -sf %{_kernelsrcdir}/config-$cfg o/.config
+	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
+	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
+	%if %{with dist_kernel}
+		%{__make} -j1 -C %{_kernelsrcdir} O=$PWD/o prepare scripts
+	%else
+		install -d o/include/config
+		touch o/include/config/MARKER
+		ln -sf %{_kernelsrcdir}/scripts o/scripts
+	%endif
+#
+#       patching/creating makefile(s) (optional)
+#
 	%{__make} -C %{_kernelsrcdir} clean \
 		RCS_FIND_IGNORE="-name '*.ko' -o" \
-		M=$PWD O=$PWD \
+		SYSSRC=%{_kernelsrcdir} \
+		SYSOUT=$PWD/o \
+		M=$PWD O=$PWD/o \
 		%{?with_verbose:V=1}
 	%{__make} -C %{_kernelsrcdir} modules \
-		M=$PWD O=$PWD \
+		CC="%{__cc}" CPP="%{__cpp}" \
+		SYSSRC=%{_kernelsrcdir} \
+		SYSOUT=$PWD/o \
+		M=$PWD O=$PWD/o \
 		%{?with_verbose:V=1}
 	mv cisco_ipsec.ko cisco_ipsec-$cfg.ko
 done
