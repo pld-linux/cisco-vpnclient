@@ -3,8 +3,6 @@
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
-%bcond_without	up		# don't build UP module
-%bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
 #
@@ -15,20 +13,22 @@
 Summary:	Cisco Systems VPN Client
 Summary(pl.UTF-8):	Klient VPN produkcji Cisco Systems
 Name:		cisco-vpnclient
-Version:	4.7.00.0640_k9
+Version:	4.8.00.0490_k9
 Release:	%{_rel}
 License:	Commercial
 Group:		Networking
-Source0:	vpnclient-linux-4.7.00.0640-k9.tar.gz
-# NoSource0-md5:	435dd370208643e526623ddfca6e938a
-Source1:	vpnclient-linux-x86_64-4.7.00.0640-k9.tar.gz
+Source0:	vpnclient-linux-4.8.00.0490-k9.tar.gz
+# NoSource0-md5:	293b08509aa56d9b5ab9f536b0dea6f3
+Source1:	vpnclient-linux-x86_64-4.8.00.0490-k9.tar.gz
+# NoSource1-md5:	0f366eafd3a73823766e14b081591c0b
 Source2:	cisco_vpnclient.init
 NoSource:	0
 NoSource:	1
-Patch0:		%{name}-kernel.patch
+# patchs - http://projects.tuxx-home.at/?id=cisco_vpn_client
+Patch0:		%{name}-2.6.22.patch
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.0}
-BuildRequires:	rpmbuild(macros) >= 1.268
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.22}
+BuildRequires:	rpmbuild(macros) >= 1.379
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
 ExclusiveArch:	%{ix86} %{x8664}
@@ -45,7 +45,7 @@ Summary:	Cisco Systems VPN Client - kernel module
 Summary(pl.UTF-8):	Klient VPN produkcji Cisco Systems - moduł jądra
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_up}
+%{?with_dist_kernel:%requires_releq_kernel}
 Requires(post,postun):	/sbin/depmod
 Provides:	cisco-vpnclient(kernel)
 
@@ -54,22 +54,6 @@ Cisco Systems VPN Client - Linux kernel module.
 
 %description -n kernel-net-cisco_ipsec -l pl.UTF-8
 Klient VPN produkcji Cisco Systems - moduł jądra Linuksa.
-
-%package -n kernel-smp-net-cisco_ipsec
-Summary:	Cisco Systems VPN Client - SMP kernel module
-Summary(pl.UTF-8):	Klient VPN produkcji Cisco Systems - moduł jądra SMP
-Release:	%{_rel}@%{_kernel_ver_str}
-License:	Commercial
-Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_smp}
-Requires(post,postun):	/sbin/depmod
-Provides:	cisco-vpnclient(kernel)
-
-%description -n kernel-smp-net-cisco_ipsec
-Cisco Systems VPN Client - Linux SMP kernel module.
-
-%description -n kernel-net-cisco_ipsec -l pl.UTF-8
-Klient VPN produkcji Cisco Systems - moduł jądra Linuksa SMP.
 
 %prep
 %setup -q -T -c
@@ -82,55 +66,15 @@ tar -zxvf %{SOURCE1}
 %patch0 -p1
 
 %build
-cd vpnclient
 %if %{with kernel}
-for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-		exit 1
-	fi
-	install -d o/include/linux
-	ln -sf %{_kernelsrcdir}/config-$cfg o/.config
-	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
-	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
-	%if %{with dist_kernel}
-		%{__make} -j1 -C %{_kernelsrcdir} O=$PWD/o prepare scripts
-	%else
-		install -d o/include/config
-		touch o/include/config/MARKER
-		ln -sf %{_kernelsrcdir}/scripts o/scripts
-	%endif
-#
-#       patching/creating makefile(s) (optional)
-#
-	%{__make} -C %{_kernelsrcdir} clean \
-		RCS_FIND_IGNORE="-name '*.ko' -o" \
-		SYSSRC=%{_kernelsrcdir} \
-		SYSOUT=$PWD/o \
-		M=$PWD O=$PWD/o \
-		%{?with_verbose:V=1}
-	%{__make} -C %{_kernelsrcdir} modules \
-		CC="%{__cc}" CPP="%{__cpp}" \
-		SYSSRC=%{_kernelsrcdir} \
-		SYSOUT=$PWD/o \
-		M=$PWD O=$PWD/o \
-		%{?with_verbose:V=1}
-	mv cisco_ipsec.ko cisco_ipsec-$cfg.ko
-done
+%build_kernel_modules -m cisco_ipsec -C vpnclient
 %endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
-cd vpnclient
-
+#cd vpnclient
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
-
-install cisco_ipsec-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
-	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/cisco_ipsec.ko
-%if %{with smp} && %{with dist_kernel}
-install cisco_ipsec-smp.ko \
-	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/cisco_ipsec.ko
-%endif
+%install_kernel_modules -m cisco_ipsec -d misc
 %endif
 
 %if %{with userspace}
@@ -164,17 +108,11 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del cisco-vpnclient
 fi
 
-%post	-n kernel-net-cisco_ipsec
+%post	-n kernel%{_alt_kernel}-net-cisco_ipsec
 %depmod %{_kernel_ver}
 
-%postun -n kernel-net-cisco_ipsec
+%postun -n kernel%{_alt_kernel}-net-cisco_ipsec
 %depmod %{_kernel_ver}
-
-%post	-n kernel-smp-net-cisco_ipsec
-%depmod %{_kernel_ver}smp
-
-%postun -n kernel-smp-net-cisco_ipsec
-%depmod %{_kernel_ver}smp
 
 %if %{with userspace}
 %files
@@ -197,15 +135,9 @@ fi
 %endif
 
 %if %{with kernel}
-%if %{with up} || %{without dist_kernel}
-%files -n kernel-net-cisco_ipsec
+%if %{without dist_kernel}
+%files -n kernel%{_alt_kernel}-net-cisco_ipsec
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/*.ko*
-%endif
-
-%if %{with smp} && %{with dist_kernel}
-%files -n kernel-smp-net-cisco_ipsec
-%defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/misc/*.ko*
 %endif
 %endif
