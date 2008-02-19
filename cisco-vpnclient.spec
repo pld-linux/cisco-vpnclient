@@ -72,7 +72,7 @@ tar -zxvf %{SOURCE1}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-#cd vpnclient
+cd vpnclient
 %if %{with kernel}
 %install_kernel_modules -m cisco_ipsec -d misc
 %endif
@@ -134,10 +134,8 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 %endif
 
-%if %{with kernel}
-%if %{without dist_kernel}
+%if %{with kernel} || %{with dist_kernel}
 %files -n kernel%{_alt_kernel}-net-cisco_ipsec
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}/misc/*.ko*
-%endif
+/lib/modules/%{_kernel_ver}/misc/*ko*
 %endif
