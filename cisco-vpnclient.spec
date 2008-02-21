@@ -1,5 +1,6 @@
 # TODO:
 # - /opt ??????
+# - cvpnd use nobody account, permission to /proc/net and /etc/opt/cisco-vpnclient/* files and dirs
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
