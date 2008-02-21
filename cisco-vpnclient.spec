@@ -13,17 +13,14 @@
 Summary:	Cisco Systems VPN Client
 Summary(pl.UTF-8):	Klient VPN produkcji Cisco Systems
 Name:		cisco-vpnclient
-Version:	4.8.00.0490_k9
+Version:	4.8.01.0640_k9
 Release:	%{_rel}
 License:	Commercial
 Group:		Networking
-Source0:	vpnclient-linux-4.8.00.0490-k9.tar.gz
-# NoSource0-md5:	293b08509aa56d9b5ab9f536b0dea6f3
-Source1:	vpnclient-linux-x86_64-4.8.00.0490-k9.tar.gz
-# NoSource1-md5:	0f366eafd3a73823766e14b081591c0b
-Source2:	cisco_vpnclient.init
+Source0:	vpnclient-linux-x86_64-4.8.01.0640-k9.tar.gz
+# NoSource0-md5:	34e134bc95c926854f40a02012e47eb6
+Source1:	cisco_vpnclient.init
 NoSource:	0
-NoSource:	1
 # patchs - http://projects.tuxx-home.at/?id=cisco_vpn_client
 Patch0:		%{name}-2.6.22.patch
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
@@ -57,13 +54,7 @@ Klient VPN produkcji Cisco Systems - moduł jądra Linuksa.
 
 %prep
 %setup -q -T -c
-%ifarch %{ix86}
 tar -zxvf %{SOURCE0}
-%endif
-%ifarch %{x8664}
-tar -zxvf %{SOURCE1}
-%endif
-%patch0 -p1
 
 %build
 %if %{with kernel}
@@ -82,7 +73,7 @@ install -d $RPM_BUILD_ROOT{/etc/rc.d/init.d,%{_sbindir}} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/opt/cisco-vpnclient/{Certificates,Profiles} \
 	$RPM_BUILD_ROOT/opt/cisco-vpnclient/{bin,lib,include}
 
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 
 install {cisco_cert_mgr,vpnclient,cvpnd,ipseclog} $RPM_BUILD_ROOT/opt/cisco-vpnclient/bin
 install libvpnapi.so $RPM_BUILD_ROOT/opt/cisco-vpnclient/lib
