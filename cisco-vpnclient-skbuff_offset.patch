@@ -1,0 +1,132 @@
+diff -ur vpnclient.old/frag.c vpnclient.new/frag.c
+--- vpnclient.old/frag.c	2007-08-22 15:30:31.000000000 -0400
++++ vpnclient/frag.c	2007-11-09 09:19:48.000000000 -0500
+@@ -22,7 +22,11 @@
+ #include "frag.h"
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
++#ifdef NET_SKBUFF_DATA_USES_OFFSET
++#define SKB_IPHDR(skb) ((struct iphdr*)(skb->head+skb->network_header))
++#else
+ #define SKB_IPHDR(skb) ((struct iphdr*)skb->network_header)
++#endif
+ #else
+ #define SKB_IPHDR(skb) skb->nh.iph
+ #endif
+diff -ur vpnclient.old/interceptor.c vpnclient.new/interceptor.c
+--- vpnclient.old/interceptor.c	2007-08-22 15:30:31.000000000 -0400
++++ vpnclient/interceptor.c	2007-11-09 10:03:01.000000000 -0500
+@@ -630,19 +630,31 @@
+ 
+     reset_inject_status(&pBinding->recv_stat);
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
++#ifdef NET_SKBUFF_DATA_USES_OFFSET
++    if (skb->mac_header >= (skb->data-skb->head))
++#else
+     if (skb->mac_header)
++#endif
+ #else
+     if (skb->mac.raw)
+ #endif
+     {
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
++#ifdef NET_SKBUFF_DATA_USES_OFFSET
++        hard_header_len = skb->mac_header - (skb->data - skb->head);
++#else
+         hard_header_len = skb->data - skb->mac_header;
++#endif
+ #else
+         hard_header_len = skb->data - skb->mac.raw;
+ #endif
+         if ((hard_header_len < 0) || (hard_header_len > skb_headroom(skb)))
+         {
+-            printk(KERN_DEBUG "bad hh len %d\n", hard_header_len);
++            printk(KERN_DEBUG "bad hh len %d, mac: %d, data: %p, head: %p\n",
++                hard_header_len,
++                skb->mac_header,
++                skb->data,
++                skb->head);
+             hard_header_len = 0;
+         }
+     }
+@@ -657,7 +669,11 @@
+     {
+     case ETH_HLEN:
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
++#ifdef NET_SKBUFF_DATA_USES_OFFSET
++        CniNewFragment(ETH_HLEN, skb->head+skb->mac_header, &MacHdr, CNI_USE_BUFFER);
++#else
+         CniNewFragment(ETH_HLEN, skb->mac_header, &MacHdr, CNI_USE_BUFFER);
++#endif
+ #else
+         CniNewFragment(ETH_HLEN, skb->mac.raw, &MacHdr, CNI_USE_BUFFER);
+ #endif
+@@ -775,7 +791,11 @@
+ #endif //LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+     reset_inject_status(&pBinding->send_stat);
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
++#ifdef NET_SKBUFF_DATA_USES_OFFSET
++    hard_header_len = skb->network_header - (skb->data - skb->head);
++#else
+     hard_header_len = skb->network_header - skb->data;
++#endif
+ #else
+     hard_header_len = skb->nh.raw - skb->data;
+ #endif
+diff -ur vpnclient.old/linuxcniapi.c vpnclient.new/linuxcniapi.c
+--- vpnclient.old/linuxcniapi.c	2007-08-22 15:30:31.000000000 -0400
++++ vpnclient/linuxcniapi.c	2007-11-09 09:17:50.000000000 -0500
+@@ -338,8 +338,13 @@
+     skb->ip_summed = CHECKSUM_UNNECESSARY;
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
++#ifdef NET_SKBUFF_DATA_USES_OFFSET
++    skb->network_header = skb->data - skb->head;
++    skb->mac_header = pMac - skb->head;
++#else
+     skb->network_header = (sk_buff_data_t) skb->data;
+     skb->mac_header = (sk_buff_data_t)pMac;
++#endif
+ #else
+     skb->nh.iph = (struct iphdr *) skb->data;
+     skb->mac.raw = pMac;
+@@ -478,8 +483,13 @@
+     skb->dev = pBinding->pDevice;
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
++#ifdef NET_SKBUFF_DATA_USES_OFFSET
++    skb->network_header = skb->data - skb->head;
++    skb->mac_header = pMac - skb->head;
++#else
+     skb->mac_header = (sk_buff_data_t)pMac;
+     skb->network_header = (sk_buff_data_t)pIP;
++#endif
+ #else
+     skb->mac.raw = pMac;
+     skb->nh.raw = pIP;
+@@ -487,8 +497,13 @@
+ 
+     /*ip header length is in 32bit words */
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
++#ifdef NET_SKBUFF_DATA_USES_OFFSET
++    skb->transport_header =
++      (pIP + (((struct iphdr*)(skb->head+skb->network_header))->ihl * 4)) - skb->head;
++#else
+     skb->transport_header = (sk_buff_data_t)
+       (pIP + (((struct iphdr*)(skb->network_header))->ihl * 4));
++#endif
+ #else
+     skb->h.raw = pIP + (skb->nh.iph->ihl * 4);
+ #endif
+diff -ur vpnclient.old/linuxkernelapi.c vpnclient.new/linuxkernelapi.c
+--- vpnclient.old/linuxkernelapi.c	2007-08-22 15:30:31.000000000 -0400
++++ vpnclient/linuxkernelapi.c	2007-11-09 09:23:21.000000000 -0500
+@@ -9,7 +9,7 @@
+     void*rc = kmalloc(size, GFP_ATOMIC);
+     if(NULL == rc)
+     {
+-        printk("<1> os_malloc size %d failed\n",size);
++        printk("<1> os_malloc size %ld failed\n",size);
+     }
+ 
+     return rc;
