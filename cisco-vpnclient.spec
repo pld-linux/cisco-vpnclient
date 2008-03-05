@@ -1,6 +1,7 @@
 # TODO:
 # - /opt ??????
 # - cvpnd use nobody account, permission to /proc/net and /etc/opt/cisco-vpnclient/* files and dirs
+# - patch for 2.6.24 broke insmod on 2.6.22, temporary disabled
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
@@ -10,7 +11,7 @@
 %if !%{with kernel}
 %undefine with_dist_kernel
 %endif
-%define		_rel	0.1
+%define		_rel	0.2
 Summary:	Cisco Systems VPN Client
 Summary(pl.UTF-8):	Klient VPN produkcji Cisco Systems
 Name:		cisco-vpnclient
@@ -59,7 +60,7 @@ Klient VPN produkcji Cisco Systems - moduł jądra Linuksa.
 %prep
 %setup -q -T -c
 tar -zxvf %{SOURCE0}
-%patch1 -p0
+#%patch1 -p0
 %patch2 -p0
 
 %build
@@ -122,7 +123,10 @@ fi
 %dir %{_sysconfdir}/opt/cisco-vpnclient
 %dir %{_sysconfdir}/opt/cisco-vpnclient/Certificates
 %dir %{_sysconfdir}/opt/cisco-vpnclient/Profiles
-%attr(755,root,root) /opt/cisco-vpnclient/bin/*
+%attr(755,root,root) /opt/cisco-vpnclient/bin/cisco_cert_mgr
+%attr(755,root,root) /opt/cisco-vpnclient/bin/ipseclog
+%attr(755,root,root) /opt/cisco-vpnclient/bin/vpnclient
+%attr(4111,root,root) /opt/cisco-vpnclient/bin/cvpnd
 %attr(755,root,root) %{_sbindir}/*
 /opt/cisco-vpnclient/lib/*
 /opt/cisco-vpnclient/include/*
