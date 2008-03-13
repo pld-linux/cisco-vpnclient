@@ -11,7 +11,7 @@
 %if !%{with kernel}
 %undefine with_dist_kernel
 %endif
-%define		_rel	0.3
+%define		_rel	0.4
 Summary:	Cisco Systems VPN Client
 Summary(pl.UTF-8):	Klient VPN produkcji Cisco Systems
 Name:		cisco-vpnclient
