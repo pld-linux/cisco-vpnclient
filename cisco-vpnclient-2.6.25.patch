@@ -38,7 +38,7 @@
  
  ifeq ($(SUBARCH),x86_64)
 -CFLAGS += -mcmodel=kernel -mno-red-zone
-+#CFLAGS += -mcmodel=kernel -mno-red-zone
++EXTRA_CFLAGS += -mcmodel=kernel -mno-red-zone
  NO_SOURCE_OBJS := libdriver64.so
  else
  NO_SOURCE_OBJS := libdriver.so
