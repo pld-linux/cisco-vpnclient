@@ -27,6 +27,7 @@ NoSource:	0
 Patch0:		%{name}-2.6.22.patch
 Patch1:		%{name}-2.6.24.patch
 Patch2:		%{name}-skbuff_offset.patch
+Patch3:		%{name}-uintptr_t.patch
 
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.22}
@@ -62,6 +63,7 @@ Klient VPN produkcji Cisco Systems - moduł jądra Linuksa.
 tar -zxvf %{SOURCE0}
 #%patch1 -p0
 %patch2 -p0
+%patch3 -p1
 
 %build
 %if %{with kernel}
