@@ -11,7 +11,7 @@
 %if !%{with kernel}
 %undefine with_dist_kernel
 %endif
-%define		_rel	0.4
+%define		_rel	1
 Summary:	Cisco Systems VPN Client
 Summary(pl.UTF-8):	Klient VPN produkcji Cisco Systems
 Name:		cisco-vpnclient
@@ -24,10 +24,8 @@ Source0:	vpnclient-linux-x86_64-4.8.01.0640-k9.tar.gz
 Source1:	cisco_vpnclient.init
 NoSource:	0
 # patchs - http://projects.tuxx-home.at/?id=cisco_vpn_client
-Patch0:		%{name}-2.6.22.patch
 Patch1:		%{name}-2.6.24.patch
 Patch2:		%{name}-skbuff_offset.patch
-Patch3:		%{name}-2.6.25.patch
 
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.22}
@@ -61,9 +59,8 @@ Klient VPN produkcji Cisco Systems - moduł jądra Linuksa.
 %prep
 %setup -q -T -c
 tar -zxvf %{SOURCE0}
-#%patch1 -p0
+%patch1 -p0
 %patch2 -p0
-%patch3 -p1
 
 %build
 %if %{with kernel}
