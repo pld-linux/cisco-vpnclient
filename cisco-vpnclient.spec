@@ -1,7 +1,6 @@
 # TODO:
 # - /opt ??????
 # - cvpnd use nobody account, permission to /proc/net and /etc/opt/cisco-vpnclient/* files and dirs
-# - patch for 2.6.24 broke insmod on 2.6.22, temporary disabled
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
@@ -11,21 +10,20 @@
 %if !%{with kernel}
 %undefine with_dist_kernel
 %endif
-%define		_rel	4
+%define		_rel	1
 Summary:	Cisco Systems VPN Client
 Summary(pl.UTF-8):	Klient VPN produkcji Cisco Systems
 Name:		cisco-vpnclient
-Version:	4.8.01.0640_k9
+Version:	4.8.02.0030_k9
 Release:	%{_rel}
 License:	Commercial
 Group:		Networking
-Source0:	vpnclient-linux-x86_64-4.8.01.0640-k9.tar.gz
-# NoSource0-md5:	34e134bc95c926854f40a02012e47eb6
+Source0:	vpnclient-linux-x86_64-4.8.02.0030-k9.tar.gz
+# NoSource0-md5:	de869c26dbc3b8851759907855dee48c
 Source1:	cisco_vpnclient.init
 NoSource:	0
 # patchs - http://projects.tuxx-home.at/?id=cisco_vpn_client
-Patch1:		%{name}-2.6.24.patch
-Patch2:		%{name}-skbuff_offset.patch
+Patch1:		%{name}-skbuff_offset.patch
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.22}
 BuildRequires:	rpmbuild(macros) >= 1.379
@@ -59,7 +57,6 @@ Klient VPN produkcji Cisco Systems - moduł jądra Linuksa.
 %setup -q -T -c
 tar -zxvf %{SOURCE0}
 %patch1 -p0
-%patch2 -p0
 
 %build
 %if %{with kernel}
