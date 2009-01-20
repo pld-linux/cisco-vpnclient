@@ -1,6 +1,8 @@
+#
 # TODO:
 # - /opt ??????
 # - cvpnd use nobody account, permission to /proc/net and /etc/opt/cisco-vpnclient/* files and dirs
+#
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
@@ -18,11 +20,12 @@ Version:	4.8.02.0030_k9
 Release:	%{_rel}
 License:	Commercial
 Group:		Networking
+# Source0-download: http://projects.tuxx-home.at/ciscovpn/clients/linux/
 Source0:	vpnclient-linux-x86_64-4.8.02.0030-k9.tar.gz
 # NoSource0-md5:	de869c26dbc3b8851759907855dee48c
 Source1:	cisco_vpnclient.init
 NoSource:	0
-# patchs - http://projects.tuxx-home.at/?id=cisco_vpn_client
+# patches - http://projects.tuxx-home.at/?id=cisco_vpn_client
 Patch1:		%{name}-skbuff_offset.patch
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.22}
