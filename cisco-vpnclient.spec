@@ -22,7 +22,7 @@
 %if !%{with kernel}
 %undefine with_dist_kernel
 %endif
-%define		_rel	3
+%define		_rel	4
 Summary:	Cisco Systems VPN Client
 Summary(pl.UTF-8):	Klient VPN produkcji Cisco Systems
 Name:		cisco-vpnclient
@@ -112,6 +112,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc vpnclient/license.txt vpnclient/sample.pcf
+/etc/modprobe.d/cisco-vpnclient.conf
 %dir /opt/cisco-vpnclient
 %dir /opt/cisco-vpnclient/bin
 %dir /opt/cisco-vpnclient/lib
@@ -134,5 +135,4 @@ rm -rf $RPM_BUILD_ROOT
 %files -n kernel%{_alt_kernel}-net-cisco_ipsec
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/*ko*
-/etc/modprobe.d/cisco-vpnclient.conf
 %endif
