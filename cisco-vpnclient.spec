@@ -9,9 +9,10 @@
 #   panic.
 #
 # Status:
-# - works with kernel-vanilla 2.6.27.*
-# - fails with kernel-vanilla 2.6.30 (kernel panic, see warning)
-# - fails with kernel-2.6.27 (/proc/net permissions. grsec related problem?)
+# - works with kernel-vanilla 2.6.31
+#
+# NOTE:
+# - version for older kernels (<= 2.6.28) is saved od LINUX_MAX_2_6_28 branch
 #
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
@@ -37,8 +38,9 @@ Source1:	%{name}.modprobe
 NoSource:	0
 # patches - http://projects.tuxx-home.at/?id=cisco_vpn_client
 Patch1:		%{name}-skbuff_offset.patch
+Patch2:		%{name}-interceptor.patch
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
-%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.22}
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.31}
 BuildRequires:	rpmbuild(macros) >= 1.379
 ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -68,6 +70,7 @@ Klient VPN produkcji Cisco Systems - moduł jądra Linuksa.
 %setup -q -T -c
 tar -zxvf %{SOURCE0}
 %patch1 -p0
+%patch2 -p0
 
 %build
 %if %{with kernel}
