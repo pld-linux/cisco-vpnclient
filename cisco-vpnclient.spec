@@ -67,8 +67,7 @@ Cisco Systems VPN Client - Linux kernel module.
 Klient VPN produkcji Cisco Systems - moduł jądra Linuksa.
 
 %prep
-%setup -q -T -c
-tar -zxvf %{SOURCE0}
+%setup -q -c
 %patch1 -p0
 %patch2 -p0
 
