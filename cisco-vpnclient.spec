@@ -39,6 +39,7 @@ NoSource:	0
 Patch1:		%{name}-skbuff_offset.patch
 URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support_series_home.html
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.22}
+BuildConflicts: kernel%{_alt_kernel}-module-build >= 2.6.29
 BuildRequires:	rpmbuild(macros) >= 1.379
 ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -65,8 +66,7 @@ Cisco Systems VPN Client - Linux kernel module.
 Klient VPN produkcji Cisco Systems - moduł jądra Linuksa.
 
 %prep
-%setup -q -T -c
-tar -zxvf %{SOURCE0}
+%setup -q -c
 %patch1 -p0
 
 %build
