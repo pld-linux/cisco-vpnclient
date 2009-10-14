@@ -41,7 +41,11 @@ URL:		http://www.cisco.com/en/US/products/sw/secursw/ps2308/tsd_products_support
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.22}
 BuildConflicts: kernel%{_alt_kernel}-module-build >= 3:2.6.29
 BuildRequires:	rpmbuild(macros) >= 1.379
+%if %{with userspace}
+ExclusiveArch:	%{ix86}
+%else
 ExclusiveArch:	%{ix86} %{x8664}
+%endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
