@@ -3,13 +3,9 @@
 # - /opt ??????
 # - cvpnd use nobody account, permission to /proc/net and /etc/opt/cisco-vpnclient/* files and dirs
 #
-# WARNING:
-# - It does not work with kernel >= 2.6.29. I'm able to connect, but the first
-#   ip packet send via cipsec0 interface (even simple icmp echo) causes kernel
-#   panic.
-#
 # Status:
-# - works with kernel-vanilla 2.6.31
+# - disconnects after few seconds with kernel-vanilla 2.6.31
+# - works well with kernel-vanilla 2.6.31.4
 #
 # NOTE:
 # - version for older kernels (<= 2.6.28) is saved od LINUX_MAX_2_6_28 branch
