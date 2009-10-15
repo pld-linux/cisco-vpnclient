@@ -75,7 +75,9 @@ Klient VPN produkcji Cisco Systems - moduł jądra Linuksa.
 
 %build
 %if %{with kernel}
+%ifarch %{x8664}
 export KBUILD_NOPEDANTIC=1
+%endif
 %build_kernel_modules -m cisco_ipsec -C vpnclient
 %endif
 
