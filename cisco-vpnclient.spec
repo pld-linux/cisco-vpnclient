@@ -68,8 +68,8 @@ Klient VPN produkcji Cisco Systems - moduł jądra Linuksa.
 
 %prep
 %setup -q -c
-%patch1 -p0
-%patch2 -p0
+%patch -P1 -p0
+%patch -P2 -p0
 
 %build
 %if %{with kernel}
